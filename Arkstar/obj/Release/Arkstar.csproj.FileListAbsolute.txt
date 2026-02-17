@@ -1,0 +1,6 @@
+C:\Users\yoong\source\repos\Arkstar\Arkstar\bin\Release\Arkstar.dll
+C:\Users\yoong\source\repos\Arkstar\Arkstar\bin\Release\Arkstar.pdb
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Release\Arkstar.csproj.AssemblyReference.cache
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Release\Arkstar.csproj.CoreCompileInputs.cache
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Release\Arkstar.dll
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Release\Arkstar.pdb

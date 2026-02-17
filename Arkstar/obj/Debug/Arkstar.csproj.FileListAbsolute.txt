@@ -1,0 +1,6 @@
+C:\Users\yoong\source\repos\Arkstar\Arkstar\bin\Debug\Arkstar.dll
+C:\Users\yoong\source\repos\Arkstar\Arkstar\bin\Debug\Arkstar.pdb
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Debug\Arkstar.csproj.AssemblyReference.cache
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Debug\Arkstar.csproj.CoreCompileInputs.cache
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Debug\Arkstar.dll
+C:\Users\yoong\source\repos\Arkstar\Arkstar\obj\Debug\Arkstar.pdb
