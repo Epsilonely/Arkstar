@@ -86,18 +86,15 @@
 - [x] Combat log weapon name not displayed (v1.0.3)
 - [x] Self-ricochet instant damage without animation (v1.0.3)
 - [x] Weapon info not showing in health tab for ricochet damage (v1.0.3)
+- [x] Lord postAction 에러 - Sequence contains no elements (v1.0.4): hitAngle=-1f → 실제 각도 계산으로 수정
 
 ### Potential Issues
 - Infinite loop possibility (mitigated by target exhaustion)
 - Performance with many ricochets in dense enemy areas
 - HashSet serialization during save (needs testing)
 
-### Active Bug (미해결)
-- **Lord postAction 에러** (발견: 2026-02-19)
-  - `System.InvalidOperationException: Sequence contains no elements`
-  - `TakeDamage()` 호출 시 `hitAngle=-1f` → Lord transition 로직이 빈 컬렉션 순회
-  - 후보 수정: `hitAngle`을 실제 각도 (`(hitPawn.Position - Position).ToVector3().AngleFlat()`) 로 교체
-  - 현재 상태: 수정 보류
+### Active Bug
+없음
 
 ## Version History
 - **v1.0.3** (2026-02-17): Self-ricochet projectile animation + weapon name display fix

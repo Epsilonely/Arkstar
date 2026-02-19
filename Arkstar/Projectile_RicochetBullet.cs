@@ -56,11 +56,12 @@ namespace Arkstar
                 Thing actualLauncher = originalLauncher ?? launcher;
                 Thing equipment = originalEquipment ?? (launcher as Pawn)?.equipment?.Primary;
 
+                float hitAngle = (hitPawn.Position - base.Position).ToVector3().AngleFlat();
                 hitPawn.TakeDamage(new DamageInfo(
                     DamageDefOf.Cut,
                     DAMAGE_AMOUNT,
                     ARMOR_PENETRATION,
-                    -1f,
+                    hitAngle,
                     actualLauncher,
                     null,
                     equipment?.def
