@@ -14,8 +14,6 @@ namespace Arkstar
         private const float RICOCHET_RANGE = 7f;
         private const float STUN_DURATION = 3f;
         private const int MIN_SHOOTING_SKILL = 10;
-        private const int DAMAGE_AMOUNT = 5;
-        private const float ARMOR_PENETRATION = 0.70f;
 
         private float currentRicochetChance = INITIAL_RICOCHET_CHANCE;
         private int ricochetCount = 0;
@@ -59,8 +57,8 @@ namespace Arkstar
                 float hitAngle = (hitPawn.Position - base.Position).ToVector3().AngleFlat();
                 hitPawn.TakeDamage(new DamageInfo(
                     DamageDefOf.Cut,
-                    DAMAGE_AMOUNT,
-                    ARMOR_PENETRATION,
+                    DamageAmount,
+                    ArmorPenetration,
                     hitAngle,
                     actualLauncher,
                     null,
@@ -84,6 +82,19 @@ namespace Arkstar
                 {
                     TryRicochet(map, position);
                 }
+
+            }
+            else if (hitThing != null)
+            {
+                hitThing.TakeDamage(new DamageInfo(
+                    DamageDefOf.Cut,
+                    DamageAmount,
+                    ArmorPenetration,
+                    ExactRotation.eulerAngles.y,
+                    originalLauncher ?? launcher,
+                    null,
+                    originalEquipment?.def ?? (launcher as Pawn)?.equipment?.Primary?.def
+                ));
             }
 
             Destroy();

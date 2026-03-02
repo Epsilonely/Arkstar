@@ -1,44 +1,29 @@
 # Active Context
 
 ## Current Focus
-**v1.0.3 - Steam Workshop update preparation**
-
-Major bug fixes complete and tested. Preparing Steam Workshop update with changelog.
+**v1.0.5 - Structure damage + quality scaling + Steam Workshop update preparation**
 
 ## Recent Changes
 
-- **2026-02-17**: v1.0.3 Major Bug Fixes
-  - **Bug 1**: Self-ricochet instant damage (no projectile animation)
-    - **Root Cause**: Line 155-177 had special handling for self-target with direct damage
-    - **Fix**: Removed special case, all targets now spawn projectiles equally
-    - **Additional Fix**: Set `launcher=null` when ricocheting to self to force collision detection
+- **2026-03-03**: v1.0.5 Changes
+  - **Feature**: Buildings/structures can now be directly targeted (`canTargetBuildings=true` in XML verb)
+  - **Feature**: Projectile now damages structures on impact (`else if (hitThing != null)` branch in Impact())
+  - **Fix**: Damage now scales with weapon quality — replaced hardcoded `DAMAGE_AMOUNT`/`ARMOR_PENETRATION` constants with `DamageAmount`/`ArmorPenetration` Projectile properties
+  - **Fix**: `Destroy()` double-call error when hitting non-Pawn things (added `return` after `base.Impact()`, then refactored to direct TakeDamage)
+  - **Files modified**: Projectile_RicochetBullet.cs, Arkstar_RangedWeapon.xml, About.xml
 
-  - **Bug 2**: Weapon name not showing in combat log for ricochet hits
-    - **Root Cause**: `launcher=null` caused `equipment` to be null in DamageInfo
-    - **Fix**: Added `originalLauncher` and `originalEquipment` fields to preserve weapon info
-    - **Implementation**: Lines 24-25, 36-37, 56-57, 98-99, 166-167
+- **2026-03-03**: About.xml updated to v1.0.5
+  - Description rewritten to focus on weapon features (removed changelog entries)
+  - Steam Workshop description finalized (English + Korean)
 
-  - **Files modified**: Projectile_RicochetBullet.cs
-  - **Testing**: User confirmed all fixes working correctly
-
-- **2026-02-17**: Balance evaluation
-  - Analyzed current balance (7.5/10 - slightly strong)
-  - User decision: Keep current balance (no changes)
-  - Strong in dense/mechanoid situations, weak in 1v1
-
-- **2026-02-17**: Steam Workshop update prep
-  - About.xml updated to v1.0.3
-  - Changelog written (Korean + English)
-  - Ready for Steam Workshop upload
-
-- **2026-02-17**: Memory bank system introduced
-  - 6 core documents created
-  - CLAUDE.md configuration file created
+- **2026-02-19**: v1.0.4 - Lord postAction error fix
+  - `hitAngle=-1f` → actual angle calculation
+  - Status: Fix complete, included in v1.0.5 build
 
 ## Next Steps
 
 ### Immediate
-1. Build final v1.0.3 DLL
+1. Build final v1.0.5 DLL
 2. Copy to mod folder
 3. Upload to Steam Workshop with changelog
 
@@ -49,7 +34,9 @@ Major bug fixes complete and tested. Preparing Steam Workshop update with change
 - Combat Extended compatibility
 
 ## Active Decisions
-Balance maintained at current levels. Focus on bug fixes only for v1.0.3.
+- Balance maintained at current levels (7.5/10)
+- Structure damage added as feature (not bug fix)
+- Damage now quality-scaled via Projectile base properties
 
 ## Current Blockers
 **None**
@@ -57,13 +44,13 @@ Balance maintained at current levels. Focus on bug fixes only for v1.0.3.
 ## Working Files
 
 ### Source Project
-- Arkstar/Projectile_RicochetBullet.cs - Ricochet projectile class (v1.0.3)
+- Arkstar/Projectile_RicochetBullet.cs - Ricochet projectile class (v1.0.5)
 - Arkstar/Arkstar.csproj - Visual Studio project
 
 ### Deployed Mod (`D:\SteamLibrary\steamapps\common\RimWorld\Mods\Arkstar\`)
-- About/About.xml - Mod metadata (v1.0.3)
+- About/About.xml - Mod metadata (v1.0.5)
 - Assemblies/Arkstar.dll - Compiled DLL (needs update)
-- Defs/ThingDefs/Arkstar_RangedWeapon.xml - Weapon and projectile definitions
+- Defs/ThingDefs/Arkstar_RangedWeapon.xml - Weapon and projectile definitions (canTargetBuildings=true)
 - Languages/Korean/DefInjected/ThingDefs/Arkstar_RangedWeapon.xml - Korean translation
 - Textures/Arkstar/WeaponRanged/ArkStar.png - Weapon texture
 - Textures/Arkstar/Projectile/ArkStar_small.png - Projectile texture
@@ -72,34 +59,24 @@ Balance maintained at current levels. Focus on bug fixes only for v1.0.3.
 
 ### v1.0.3 - Self-Ricochet & Weapon Name Bugs
 **Problem 1**: Self-ricochet applied instant damage without projectile animation
-**Root Cause**: Special case handling at Line 155-177 used direct damage for self-target
-**Fix**:
-- Removed special case code
-- All targets spawn projectiles equally
-- Set `launcher=null` for self-ricochet to force collision (Line 172)
+**Fix**: Removed special case, all targets spawn projectiles equally. Set `launcher=null` for self-ricochet.
 
 **Problem 2**: Weapon name not showing in health tab for ricochet damage
-**Root Cause**: `launcher=null` caused equipment info loss
-**Fix**:
-- Added `originalLauncher` and `originalEquipment` fields (Line 24-25)
-- Store original values at initialization (Line 36-37)
-- Use original values in DamageInfo (Line 56-57, 64, 77)
-- Propagate to child projectiles (Line 166-167)
+**Fix**: Added `originalLauncher` and `originalEquipment` fields to preserve weapon info across ricochets.
 
-**Result**: All ricochet damage now shows "cut (arcstar)" in health tab with proper projectile animation
+### v1.0.4 - Lord postAction Error
+**Error**: `System.InvalidOperationException: Sequence contains no elements`
+**Stack**: `Lord:Notify_PawnDamaged → Transition:CheckSignal → Transition:Execute`
+**Cause**: `TakeDamage()` called with `hitAngle=-1f`
+**Fix**: `float hitAngle = (hitPawn.Position - base.Position).ToVector3().AngleFlat();`
 
-## Bug Fix Archive (cont.)
+### v1.0.5 - Structure Damage & Quality Scaling
+**Problem 1**: Non-Pawn hits (walls, buildings) caused `Destroy() already destroyed` error
+**Cause**: `base.Impact()` internally calls `Destroy()`, then our code called it again
+**Fix**: Direct `TakeDamage()` call for non-Pawn targets, no `base.Impact()`
 
-### v1.0.4 - Lord postAction 에러
-**발견**: 2026-02-19
-**에러**: `System.InvalidOperationException: Sequence contains no elements`
-**스택**: `Lord:Notify_PawnDamaged → Transition:CheckSignal → Transition:Execute`
-**원인**: `TakeDamage()` 호출 시 `hitAngle=-1f` → RimWorld가 발사체 방향에서 각도 자동 계산 시도, 리코쳇 발사체의 비정상 launcher 상태로 Lord transition 로직이 빈 컬렉션 순회
-**Fix**: `hitAngle`을 실제 각도로 계산하여 전달
-```csharp
-float hitAngle = (hitPawn.Position - base.Position).ToVector3().AngleFlat();
-```
-**상태**: 수정 완료 (빌드 및 테스트 필요)
+**Problem 2**: Damage hardcoded to 5, ignoring weapon quality
+**Fix**: Replaced `DAMAGE_AMOUNT`/`ARMOR_PENETRATION` constants with `DamageAmount`/`ArmorPenetration` Projectile properties
 
 ---
-*Last Updated: 2026-02-19*
+*Last Updated: 2026-03-03*
